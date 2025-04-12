@@ -23,9 +23,13 @@ def test_inference_job(
 ) -> None:
     # given
     if isinstance(alias_or_version, int):
-        assert alias_or_version == model_alias.version, "Model version should be the same!"
+        assert alias_or_version == model_alias.version, (
+            "Model version should be the same!"
+        )
     else:
-        assert alias_or_version == model_alias.aliases[0], "Model alias should be the same!"
+        assert alias_or_version == model_alias.aliases[0], (
+            "Model alias should be the same!"
+        )
     # when
     job = jobs.InferenceJob(
         logger_service=logger_service,
@@ -50,9 +54,13 @@ def test_inference_job(
         "outputs",
     }
     # - inputs
-    assert out["inputs"].ndim == out["inputs_"].ndim == 2, "Inputs should be a dataframe!"
+    assert out["inputs"].ndim == out["inputs_"].ndim == 2, (
+        "Inputs should be a dataframe!"
+    )
     # - model uri
-    assert str(alias_or_version) in out["model_uri"], "Model URI should contain the model alias!"
+    assert str(alias_or_version) in out["model_uri"], (
+        "Model URI should contain the model alias!"
+    )
     assert mlflow_service.registry_name in out["model_uri"], (
         "Model URI should contain the registry name!"
     )
@@ -60,11 +68,15 @@ def test_inference_job(
     assert out["model"].model.metadata.run_id == model_alias.run_id, (
         "Model run id should be the same!"
     )
-    assert out["model"].model.metadata.signature is not None, "Model should have a signature!"
+    assert out["model"].model.metadata.signature is not None, (
+        "Model should have a signature!"
+    )
     assert out["model"].model.metadata.flavors.get("python_function"), (
         "Model should have a pyfunc flavor!"
     )
     # - outputs
     assert out["outputs"].ndim == 2, "Outputs should be a dataframe!"
     # - alerting service
-    assert "Inference Job Finished" in capsys.readouterr().out, "Alerting service should be called!"
+    assert "Inference Job Finished" in capsys.readouterr().out, (
+        "Alerting service should be called!"
+    )

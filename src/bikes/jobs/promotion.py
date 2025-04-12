@@ -2,7 +2,7 @@
 
 # %% IMPORTS
 
-import typing as T
+import typing
 
 from bikes.jobs import base
 
@@ -19,12 +19,12 @@ class PromotionJob(base.Job):
         version (int | None): the model version to transition (use None for latest).
     """
 
-    KIND: T.Literal["PromotionJob"] = "PromotionJob"
+    KIND: typing.Literal["PromotionJob"] = "PromotionJob"
 
     alias: str = "Champion"
     version: int | None = None
 
-    @T.override
+    @typing.override
     def run(self) -> base.Locals:
         # services
         # - logger

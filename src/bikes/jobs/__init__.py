@@ -11,7 +11,14 @@ from bikes.jobs.tuning import TuningJob
 
 # %% TYPES
 
-JobKind = TuningJob | TrainingJob | PromotionJob | InferenceJob | EvaluationsJob | ExplanationsJob
+JobKind = (
+    TuningJob
+    | TrainingJob
+    | PromotionJob
+    | InferenceJob
+    | EvaluationsJob
+    | ExplanationsJob
+)
 
 # %% EXPORTS
 

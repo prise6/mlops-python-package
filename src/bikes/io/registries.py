@@ -3,7 +3,7 @@
 # %% IMPORTS
 
 import abc
-import typing as T
+import typing
 
 import mlflow
 import pydantic as pdt
@@ -15,9 +15,9 @@ from bikes.utils import signers
 # %% TYPES
 
 # Results of model registry operations
-Info: T.TypeAlias = mlflow.models.model.ModelInfo
-Alias: T.TypeAlias = mlflow.entities.model_registry.ModelVersion
-Version: T.TypeAlias = mlflow.entities.model_registry.ModelVersion
+Info: typing.TypeAlias = mlflow.models.model.ModelInfo
+Alias: typing.TypeAlias = mlflow.entities.model_registry.ModelVersion
+Version: typing.TypeAlias = mlflow.entities.model_registry.ModelVersion
 
 # %% HELPERS
 
@@ -106,7 +106,7 @@ class CustomSaver(Saver):
     https://mlflow.org/docs/latest/python_api/mlflow.pyfunc.html
     """
 
-    KIND: T.Literal["CustomSaver"] = "CustomSaver"
+    KIND: typing.Literal["CustomSaver"] = "CustomSaver"
 
     class Adapter(PythonModel):  # type: ignore[misc]
         """Adapt a custom model to the Mlflow PyFunc flavor for saving operations.
@@ -126,21 +126,21 @@ class CustomSaver(Saver):
             self,
             context: PythonModelContext,
             model_input: schemas.Inputs,
-            params: dict[str, T.Any] | None = None,
+            params: dict[str, typing.Any] | None = None,
         ) -> schemas.Outputs:
             """Generate predictions with a custom model for the given inputs.
 
             Args:
                 context (mlflow.PythonModelContext): mlflow context.
                 model_input (schemas.Inputs): inputs for the mlflow model.
-                params (dict[str, T.Any] | None): additional parameters.
+                params (dict[str, typing.Any] | None): additional parameters.
 
             Returns:
                 schemas.Outputs: validated outputs of the project model.
             """
             return self.model.predict(inputs=model_input)
 
-    @T.override
+    @typing.override
     def save(
         self,
         model: models.Model,
@@ -165,11 +165,11 @@ class BuiltinSaver(Saver):
         flavor (str): Mlflow flavor module to use for the serialization.
     """
 
-    KIND: T.Literal["BuiltinSaver"] = "BuiltinSaver"
+    KIND: typing.Literal["BuiltinSaver"] = "BuiltinSaver"
 
     flavor: str
 
-    @T.override
+    @typing.override
     def save(
         self,
         model: models.Model,
@@ -232,7 +232,7 @@ class CustomLoader(Loader):
     https://mlflow.org/docs/latest/python_api/mlflow.pyfunc.html
     """
 
-    KIND: T.Literal["CustomLoader"] = "CustomLoader"
+    KIND: typing.Literal["CustomLoader"] = "CustomLoader"
 
     class Adapter(Loader.Adapter):
         """Adapt a custom model for the project inference."""
@@ -245,13 +245,13 @@ class CustomLoader(Loader):
             """
             self.model = model
 
-        @T.override
+        @typing.override
         def predict(self, inputs: schemas.Inputs) -> schemas.Outputs:
             # model validation is already done in predict
             outputs = self.model.predict(data=inputs)
-            return T.cast(schemas.Outputs, outputs)
+            return typing.cast(schemas.Outputs, outputs)
 
-    @T.override
+    @typing.override
     def load(self, uri: str) -> "CustomLoader.Adapter":
         model = mlflow.pyfunc.load_model(model_uri=uri)
         adapter = CustomLoader.Adapter(model=model)
@@ -266,7 +266,7 @@ class BuiltinLoader(Loader):
     https://mlflow.org/docs/latest/models.html#built-in-model-flavors
     """
 
-    KIND: T.Literal["BuiltinLoader"] = "BuiltinLoader"
+    KIND: typing.Literal["BuiltinLoader"] = "BuiltinLoader"
 
     class Adapter(Loader.Adapter):
         """Adapt a builtin model for the project inference."""
@@ -279,13 +279,13 @@ class BuiltinLoader(Loader):
             """
             self.model = model
 
-        @T.override
+        @typing.override
         def predict(self, inputs: schemas.Inputs) -> schemas.Outputs:
             columns = list(schemas.OutputsSchema.to_schema().columns)
             outputs = self.model.predict(data=inputs)  # unchecked data!
             return schemas.Outputs(outputs, columns=columns, index=inputs.index)
 
-    @T.override
+    @typing.override
     def load(self, uri: str) -> "BuiltinLoader.Adapter":
         model = mlflow.pyfunc.load_model(model_uri=uri)
         adapter = BuiltinLoader.Adapter(model=model)
@@ -304,12 +304,12 @@ class Register(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid")
     e.g., to change the model registry backend.
 
     Parameters:
-        tags (dict[str, T.Any]): tags for the model.
+        tags (dict[str, typing.Any]): tags for the model.
     """
 
     KIND: str
 
-    tags: dict[str, T.Any] = {}
+    tags: dict[str, typing.Any] = {}
 
     @abc.abstractmethod
     def register(self, name: str, model_uri: str) -> Version:
@@ -330,9 +330,9 @@ class MlflowRegister(Register):
     https://mlflow.org/docs/latest/model-registry.html
     """
 
-    KIND: T.Literal["MlflowRegister"] = "MlflowRegister"
+    KIND: typing.Literal["MlflowRegister"] = "MlflowRegister"
 
-    @T.override
+    @typing.override
     def register(self, name: str, model_uri: str) -> Version:
         return mlflow.register_model(name=name, model_uri=model_uri, tags=self.tags)
 

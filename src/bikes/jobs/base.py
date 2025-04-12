@@ -3,8 +3,8 @@
 # %% IMPORTS
 
 import abc
-import types as TS
-import typing as T
+import typing
+from types import TracebackType
 
 import pydantic as pdt
 
@@ -13,7 +13,7 @@ from bikes.io import services
 # %% TYPES
 
 # Local job variables
-Locals = T.Dict[str, T.Any]
+Locals = typing.Dict[str, typing.Any]
 
 # %% JOBS
 
@@ -36,11 +36,11 @@ class Job(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
     alerts_service: services.AlertsService = services.AlertsService()
     mlflow_service: services.MlflowService = services.MlflowService()
 
-    def __enter__(self) -> T.Self:
+    def __enter__(self) -> typing.Self:
         """Enter the job context.
 
         Returns:
-            T.Self: return the current object.
+            typing.Self: return the current object.
         """
         self.logger_service.start()
         logger = self.logger_service.logger()
@@ -53,19 +53,19 @@ class Job(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
 
     def __exit__(
         self,
-        exc_type: T.Type[BaseException] | None,
+        exc_type: typing.Type[BaseException] | None,
         exc_value: BaseException | None,
-        exc_traceback: TS.TracebackType | None,
-    ) -> T.Literal[False]:
+        exc_traceback: TracebackType | None,
+    ) -> typing.Literal[False]:
         """Exit the job context.
 
         Args:
-            exc_type (T.Type[BaseException] | None): ignored.
+            exc_type (typing.Type[BaseException] | None): ignored.
             exc_value (BaseException | None): ignored.
             exc_traceback (TS.TracebackType | None): ignored.
 
         Returns:
-            T.Literal[False]: always propagate exceptions.
+            typing.Literal[False]: always propagate exceptions.
         """
         logger = self.logger_service.logger()
         logger.debug("[STOP] Mlflow service: {}", self.mlflow_service)

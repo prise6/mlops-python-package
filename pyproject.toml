@@ -52,7 +52,6 @@ bikes = 'bikes.scripts:main'
 
 [dependency-groups]
 check = [
-    "bandit>=1.8.3",
     "coverage>=7.6.12",
     "mypy>=1.15.0",
     "pandera[mypy]>=0.23.0",
@@ -60,7 +59,7 @@ check = [
     "pytest-cov>=6.0.0",
     "pytest-mock>=3.14.0",
     "pytest-xdist>=3.6.1",
-    "ruff>=0.9.9",
+    "ruff>=0.11.5",
 ]
 commit = ["commitizen>=4.4.1", "pre-commit>=4.1.0"]
 dev = ["rust-just>=1.39.0"]
@@ -71,9 +70,6 @@ notebook = ["ipykernel>=6.29.5", "nbformat>=5.10.4"]
 
 [tool.uv]
 default-groups = ["check", "commit", "dev", "doc", "notebook"]
-
-[tool.bandit]
-targets = ["src"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -102,17 +98,33 @@ pythonpath = ["src"]
 [tool.ruff]
 fix = true
 indent-width = 4
-line-length = 100
+line-length = 88
 target-version = "py313"
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = ["A", "B", "C90", "E", "F", "I", "N", "W", "FAST", "S", "ASYNC"]
+ignore = ["B008", "E501"]
+unfixable = ["F401"]
 
 [tool.ruff.format]
 docstring-code-format = true
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*.py" = ["D100", "D103"]
+"tests/*.py" = ["D100", "D103", "S101"]
 
 # SYSTEMS
 

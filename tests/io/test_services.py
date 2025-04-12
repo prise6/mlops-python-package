@@ -41,7 +41,9 @@ def test_alerts_service(
             plyer.notification.notify.assert_called_once(),
             "Notification method should be called!",
         )
-        assert capsys.readouterr().out == "", "Notification should not be printed to stdout!"
+        assert capsys.readouterr().out == "", (
+            "Notification should not be printed to stdout!"
+        )
     else:
         (
             plyer.notification.notify.assert_not_called(),
@@ -85,13 +87,25 @@ def test_mlflow_service(mlflow_service: services.MlflowService) -> None:
     # - run
     assert run_config.tags is not None, "Run config tags should be set!"
     # - mlflow
-    assert service.tracking_uri == mlflow.get_tracking_uri(), "Tracking URI should be the same!"
-    assert service.registry_uri == mlflow.get_registry_uri(), "Registry URI should be the same!"
-    assert mlflow.get_experiment_by_name(service.experiment_name), "Experiment should be setup!"
+    assert service.tracking_uri == mlflow.get_tracking_uri(), (
+        "Tracking URI should be the same!"
+    )
+    assert service.registry_uri == mlflow.get_registry_uri(), (
+        "Registry URI should be the same!"
+    )
+    assert mlflow.get_experiment_by_name(service.experiment_name), (
+        "Experiment should be setup!"
+    )
     # - client
-    assert service.tracking_uri == client.tracking_uri, "Tracking URI should be the same!"
-    assert service.registry_uri == client._registry_uri, "Tracking URI should be the same!"
-    assert client.get_experiment_by_name(service.experiment_name), "Experiment should be setup!"
+    assert service.tracking_uri == client.tracking_uri, (
+        "Tracking URI should be the same!"
+    )
+    assert service.registry_uri == client._registry_uri, (
+        "Tracking URI should be the same!"
+    )
+    assert client.get_experiment_by_name(service.experiment_name), (
+        "Experiment should be setup!"
+    )
     # - context
     assert context.info.run_name == run_config.name, "Context name should be the same!"
     assert run_config.description in context.data.tags.values(), (

@@ -25,9 +25,13 @@ def test_explanations_job(
 ) -> None:
     # given
     if isinstance(alias_or_version, int):
-        assert alias_or_version == model_alias.version, "Model version should be the same!"
+        assert alias_or_version == model_alias.version, (
+            "Model version should be the same!"
+        )
     else:
-        assert alias_or_version == model_alias.aliases[0], "Model alias should be the same!"
+        assert alias_or_version == model_alias.aliases[0], (
+            "Model alias should be the same!"
+        )
     # when
     job = jobs.ExplanationsJob(
         logger_service=logger_service,
@@ -55,23 +59,27 @@ def test_explanations_job(
     # - inputs
     assert out["inputs_samples"].ndim == 2, "Inputs samples should be a dataframe!"
     # - model uri
-    assert str(alias_or_version) in out["model_uri"], "Model URI should contain the model alias!"
+    assert str(alias_or_version) in out["model_uri"], (
+        "Model URI should contain the model alias!"
+    )
     assert mlflow_service.registry_name in out["model_uri"], (
         "Model URI should contain the registry name!"
     )
     # - model
-    assert isinstance(out["model"], models.Model), "Model should be an instance of a project Model!"
-    # - model explanations
-    assert len(out["models_explanations"].index) >= len(out["inputs_samples"].columns), (
-        "Model explanations should have at least as many columns as inputs samples!"
+    assert isinstance(out["model"], models.Model), (
+        "Model should be an instance of a project Model!"
     )
+    # - model explanations
+    assert len(out["models_explanations"].index) >= len(
+        out["inputs_samples"].columns
+    ), "Model explanations should have at least as many columns as inputs samples!"
     # - samples explanations
     assert len(out["samples_explanations"].index) == len(out["inputs_samples"].index), (
         "Samples explanations should have the same number of rows as inputs samples!"
     )
-    assert len(out["samples_explanations"].columns) >= len(out["inputs_samples"].columns), (
-        "Samples explanations should have at least as many columns as inputs samples!"
-    )
+    assert len(out["samples_explanations"].columns) >= len(
+        out["inputs_samples"].columns
+    ), "Samples explanations should have at least as many columns as inputs samples!"
     # - alerting service
     assert "Explanations Job Finished" in capsys.readouterr().out, (
         "Alerting service should be called!"

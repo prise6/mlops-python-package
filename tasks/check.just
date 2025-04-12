@@ -1,6 +1,6 @@
 # run check tasks
 [group('check')]
-check: check-code check-type check-format check-security check-coverage
+check: check-code check-type check-format check-coverage
 
 # check code quality
 [group('check')]
@@ -17,10 +17,6 @@ check-coverage numprocesses="auto" cov_fail_under="80":
 check-format:
     uv run ruff format --check {{SOURCES}} {{TESTS}}
 
-# check code security
-[group('check')]
-check-security:
-    uv run bandit --recursive --configfile=pyproject.toml {{SOURCES}}
 
 # check unit tests
 [group('check')]

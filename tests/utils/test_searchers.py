@@ -25,8 +25,12 @@ def test_grid_cv_searcher(
         cv=train_test_splitter,
     )
     # then
-    assert set(best_params) == set(param_grid), "Best params should have the same keys as grid!"
-    assert float("-inf") < best_score < float("+inf"), "Best score should be a floating number!"
+    assert set(best_params) == set(param_grid), (
+        "Best params should have the same keys as grid!"
+    )
+    assert float("-inf") < best_score < float("+inf"), (
+        "Best score should be a floating number!"
+    )
     assert len(result) == sum(len(vs) for vs in param_grid.values()), (
         "Results should have one row per candidate!"
     )

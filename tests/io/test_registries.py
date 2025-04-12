@@ -33,15 +33,19 @@ def test_uri_for_model_alias_or_version() -> None:
     alias = "Champion"
     version = 1
     # when
-    alias_uri = registries.uri_for_model_alias_or_version(name=name, alias_or_version=alias)
-    version_uri = registries.uri_for_model_alias_or_version(name=name, alias_or_version=version)
+    alias_uri = registries.uri_for_model_alias_or_version(
+        name=name, alias_or_version=alias
+    )
+    version_uri = registries.uri_for_model_alias_or_version(
+        name=name, alias_or_version=version
+    )
     # then
     assert alias_uri == registries.uri_for_model_alias(name=name, alias=alias), (
         "The alias URI should be valid!"
     )
-    assert version_uri == registries.uri_for_model_version(name=name, version=version), (
-        "The version URI should be valid!"
-    )
+    assert version_uri == registries.uri_for_model_version(
+        name=name, version=version
+    ), "The version URI should be valid!"
 
 
 # %% SAVERS/LOADERS/REGISTERS
@@ -70,7 +74,9 @@ def test_custom_pipeline(
     outputs = adapter.predict(inputs=inputs)
     # then
     # - uri
-    assert model_uri == f"models:/{name}/{version.version}", "The model URI should be valid!"
+    assert model_uri == f"models:/{name}/{version.version}", (
+        "The model URI should be valid!"
+    )
     # - info
     assert info.run_id == run.info.run_id, "The run id should be the same!"
     assert info.artifact_path == path, "The artifact path should be the same!"
@@ -80,7 +86,9 @@ def test_custom_pipeline(
     assert version.name == name, "The model version name should be the same!"
     assert version.tags == tags, "The model version tags should be the same!"
     assert version.aliases == [], "The model version aliases should be empty!"
-    assert version.run_id == run.info.run_id, "The model version run id should be the same!"
+    assert version.run_id == run.info.run_id, (
+        "The model version run id should be the same!"
+    )
     # - adapter
     assert adapter.model.metadata.run_id == version.run_id, (
         "The adapter model run id should be the same!"
@@ -119,18 +127,24 @@ def test_builtin_pipeline(
     outputs = adapter.predict(inputs=inputs)
     # then
     # - uri
-    assert model_uri == f"models:/{name}/{version.version}", "The model URI should be valid!"
+    assert model_uri == f"models:/{name}/{version.version}", (
+        "The model URI should be valid!"
+    )
     # - info
     assert info.run_id == run.info.run_id, "The run id should be the same!"
     assert info.artifact_path == path, "The artifact path should be the same!"
     assert info.signature == signature, "The model signature should be the same!"
     assert info.flavors.get("python_function"), "The model should have a pyfunc flavor!"
-    assert info.flavors.get(flavor), f"The model should have a built-in model flavor: {flavor}!"
+    assert info.flavors.get(flavor), (
+        f"The model should have a built-in model flavor: {flavor}!"
+    )
     # - version
     assert version.name == name, "The model version name should be the same!"
     assert version.tags == tags, "The model version tags should be the same!"
     assert version.aliases == [], "The model version aliases should be empty!"
-    assert version.run_id == run.info.run_id, "The model version run id should be the same!"
+    assert version.run_id == run.info.run_id, (
+        "The model version run id should be the same!"
+    )
     # - adapter
     assert adapter.model.metadata.run_id == version.run_id, (
         "The adapter model run id should be the same!"

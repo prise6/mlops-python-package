@@ -2,7 +2,7 @@
 
 # %% IMPORTS
 
-import typing as T
+import typing
 
 import pydantic as pdt
 
@@ -23,7 +23,7 @@ class InferenceJob(base.Job):
         loader (registries.LoaderKind): registry loader for the model.
     """
 
-    KIND: T.Literal["InferenceJob"] = "InferenceJob"
+    KIND: typing.Literal["InferenceJob"] = "InferenceJob"
 
     # Inputs
     inputs: datasets.ReaderKind = pdt.Field(..., discriminator="KIND")
@@ -32,9 +32,11 @@ class InferenceJob(base.Job):
     # Model
     alias_or_version: str | int = "Champion"
     # Loader
-    loader: registries.LoaderKind = pdt.Field(registries.CustomLoader(), discriminator="KIND")
+    loader: registries.LoaderKind = pdt.Field(
+        registries.CustomLoader(), discriminator="KIND"
+    )
 
-    @T.override
+    @typing.override
     def run(self) -> base.Locals:
         # services
         logger = self.logger_service.logger()

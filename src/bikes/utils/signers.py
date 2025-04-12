@@ -3,7 +3,7 @@
 # %% IMPORTS
 
 import abc
-import typing as T
+import typing
 
 import mlflow
 import pydantic as pdt
@@ -13,7 +13,7 @@ from bikes.core import schemas
 
 # %% TYPES
 
-Signature: T.TypeAlias = ms.ModelSignature
+Signature: typing.TypeAlias = ms.ModelSignature
 
 # %% SIGNERS
 
@@ -45,9 +45,9 @@ class Signer(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
 class InferSigner(Signer):
     """Generate model signatures from inputs/outputs data."""
 
-    KIND: T.Literal["InferSigner"] = "InferSigner"
+    KIND: typing.Literal["InferSigner"] = "InferSigner"
 
-    @T.override
+    @typing.override
     def sign(self, inputs: schemas.Inputs, outputs: schemas.Outputs) -> Signature:
         return mlflow.models.infer_signature(model_input=inputs, model_output=outputs)
 

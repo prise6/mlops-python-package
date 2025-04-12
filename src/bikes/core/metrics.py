@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import abc
-import typing as T
+import typing
 
 import mlflow
 import pandas as pd
@@ -17,9 +17,9 @@ from bikes.core import models, schemas
 
 # %% TYPINGS
 
-MlflowMetric: T.TypeAlias = MetricValue
-MlflowThreshold: T.TypeAlias = mlflow.models.MetricThreshold
-MlflowModelValidationFailedException: T.TypeAlias = (
+MlflowMetric: typing.TypeAlias = MetricValue
+MlflowThreshold: typing.TypeAlias = mlflow.models.MetricThreshold
+MlflowModelValidationFailedException: typing.TypeAlias = (
     mlflow.models.evaluation.validation.ModelValidationFailedException
 )
 
@@ -78,7 +78,9 @@ class Metric(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
             MlflowMetric: the Mlflow metric.
         """
 
-        def eval_fn(predictions: pd.Series[int], targets: pd.Series[int]) -> MlflowMetric:
+        def eval_fn(
+            predictions: pd.Series[int], targets: pd.Series[int]
+        ) -> MlflowMetric:
             """Evaluation function associated with the mlflow metric.
 
             Args:
@@ -111,12 +113,12 @@ class SklearnMetric(Metric):
         greater_is_better (bool): maximize or minimize.
     """
 
-    KIND: T.Literal["SklearnMetric"] = "SklearnMetric"
+    KIND: typing.Literal["SklearnMetric"] = "SklearnMetric"
 
     name: str = "mean_squared_error"
     greater_is_better: bool = False
 
-    @T.override
+    @typing.override
     def score(self, targets: schemas.Targets, outputs: schemas.Outputs) -> float:
         metric = getattr(sklearn_metrics, self.name)
         sign = 1 if self.greater_is_better else -1
@@ -127,7 +129,9 @@ class SklearnMetric(Metric):
 
 
 MetricKind = SklearnMetric
-MetricsKind: T.TypeAlias = list[T.Annotated[MetricKind, pdt.Field(discriminator="KIND")]]
+MetricsKind: typing.TypeAlias = list[
+    typing.Annotated[MetricKind, pdt.Field(discriminator="KIND")]
+]
 
 # %% THRESHOLDS
 
@@ -152,4 +156,6 @@ class Threshold(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"
         Returns:
             MlflowThreshold: the mlflow threshold.
         """
-        return MlflowThreshold(threshold=self.threshold, greater_is_better=self.greater_is_better)
+        return MlflowThreshold(
+            threshold=self.threshold, greater_is_better=self.greater_is_better
+        )

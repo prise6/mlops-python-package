@@ -2,7 +2,7 @@
 
 # %% IMPORTS
 
-import typing as T
+import typing
 
 import mlflow
 import pydantic as pdt
@@ -31,15 +31,19 @@ class TrainingJob(base.Job):
         registry (registries.RegisterKind): model register.
     """
 
-    KIND: T.Literal["TrainingJob"] = "TrainingJob"
+    KIND: typing.Literal["TrainingJob"] = "TrainingJob"
 
     # Run
-    run_config: services.MlflowService.RunConfig = services.MlflowService.RunConfig(name="Training")
+    run_config: services.MlflowService.RunConfig = services.MlflowService.RunConfig(
+        name="Training"
+    )
     # Data
     inputs: datasets.ReaderKind = pdt.Field(..., discriminator="KIND")
     targets: datasets.ReaderKind = pdt.Field(..., discriminator="KIND")
     # Model
-    model: models.ModelKind = pdt.Field(models.BaselineSklearnModel(), discriminator="KIND")
+    model: models.ModelKind = pdt.Field(
+        models.BaselineSklearnModel(), discriminator="KIND"
+    )
     # Metrics
     metrics: metrics_.MetricsKind = [metrics_.SklearnMetric()]
     # Splitter
@@ -47,14 +51,18 @@ class TrainingJob(base.Job):
         splitters.TrainTestSplitter(), discriminator="KIND"
     )
     # Saver
-    saver: registries.SaverKind = pdt.Field(registries.CustomSaver(), discriminator="KIND")
+    saver: registries.SaverKind = pdt.Field(
+        registries.CustomSaver(), discriminator="KIND"
+    )
     # Signer
     signer: signers.SignerKind = pdt.Field(signers.InferSigner(), discriminator="KIND")
     # Registrer
     # - avoid shadowing pydantic `register` pydantic function
-    registry: registries.RegisterKind = pdt.Field(registries.MlflowRegister(), discriminator="KIND")
+    registry: registries.RegisterKind = pdt.Field(
+        registries.MlflowRegister(), discriminator="KIND"
+    )
 
-    @T.override
+    @typing.override
     def run(self) -> base.Locals:
         # services
         # - logger
@@ -92,15 +100,17 @@ class TrainingJob(base.Job):
             # splitter
             logger.info("With splitter: {}", self.splitter)
             # - index
-            train_index, test_index = next(self.splitter.split(inputs=inputs, targets=targets))
+            train_index, test_index = next(
+                self.splitter.split(inputs=inputs, targets=targets)
+            )
             # - inputs
-            inputs_train = T.cast(schemas.Inputs, inputs.iloc[train_index])
-            inputs_test = T.cast(schemas.Inputs, inputs.iloc[test_index])
+            inputs_train = typing.cast(schemas.Inputs, inputs.iloc[train_index])
+            inputs_test = typing.cast(schemas.Inputs, inputs.iloc[test_index])
             logger.debug("- Inputs train shape: {}", inputs_train.shape)
             logger.debug("- Inputs test shape: {}", inputs_test.shape)
             # - targets
-            targets_train = T.cast(schemas.Targets, targets.iloc[train_index])
-            targets_test = T.cast(schemas.Targets, targets.iloc[test_index])
+            targets_train = typing.cast(schemas.Targets, targets.iloc[train_index])
+            targets_test = typing.cast(schemas.Targets, targets.iloc[test_index])
             logger.debug("- Targets train shape: {}", targets_train.shape)
             logger.debug("- Targets test shape: {}", targets_test.shape)
             # model

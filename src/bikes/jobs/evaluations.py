@@ -2,7 +2,7 @@
 
 # %% IMPORTS
 
-import typing as T
+import typing
 
 import mlflow
 import pandas as pd
@@ -30,7 +30,7 @@ class EvaluationsJob(base.Job):
         thresholds (dict[str, metrics_.Threshold] | None): metric thresholds.
     """
 
-    KIND: T.Literal["EvaluationsJob"] = "EvaluationsJob"
+    KIND: typing.Literal["EvaluationsJob"] = "EvaluationsJob"
 
     # Run
     run_config: services.MlflowService.RunConfig = services.MlflowService.RunConfig(
@@ -43,7 +43,9 @@ class EvaluationsJob(base.Job):
     model_type: str = "regressor"
     alias_or_version: str | int = "Champion"
     # Loader
-    loader: registries.LoaderKind = pdt.Field(registries.CustomLoader(), discriminator="KIND")
+    loader: registries.LoaderKind = pdt.Field(
+        registries.CustomLoader(), discriminator="KIND"
+    )
     # Metrics
     metrics: metrics_.MetricsKind = [metrics_.SklearnMetric()]
     # Evaluators
@@ -53,7 +55,7 @@ class EvaluationsJob(base.Job):
         "r2_score": metrics_.Threshold(threshold=0.5, greater_is_better=True)
     }
 
-    @T.override
+    @typing.override
     def run(self) -> base.Locals:
         # services
         # - logger
@@ -120,7 +122,8 @@ class EvaluationsJob(base.Job):
             # thresholds
             logger.info("Convert thresholds: {}", self.thresholds)
             validation_thresholds = {
-                name: threshold.to_mlflow() for name, threshold in self.thresholds.items()
+                name: threshold.to_mlflow()
+                for name, threshold in self.thresholds.items()
             }
             logger.debug("- Validation thresholds: {}", validation_thresholds)
             # evaluations

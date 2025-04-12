@@ -3,7 +3,7 @@
 # %% IMPORTS
 
 import abc
-import typing as T
+import typing
 
 import pandas as pd
 import pydantic as pdt
@@ -16,7 +16,7 @@ from bikes.core import schemas
 
 # Model params
 ParamKey = str
-ParamValue = T.Any
+ParamValue = typing.Any
 Params = dict[ParamKey, ParamValue]
 
 # %% MODELS
@@ -46,18 +46,18 @@ class Model(abc.ABC, pdt.BaseModel, strict=True, frozen=False, extra="forbid"):
                 params[key] = value
         return params
 
-    def set_params(self, **params: ParamValue) -> T.Self:
+    def set_params(self, **params: ParamValue) -> typing.Self:
         """Set the model params in place.
 
         Returns:
-            T.Self: instance of the model.
+            typing.Self: instance of the model.
         """
         for key, value in params.items():
             setattr(self, key, value)
         return self
 
     @abc.abstractmethod
-    def fit(self, inputs: schemas.Inputs, targets: schemas.Targets) -> T.Self:
+    def fit(self, inputs: schemas.Inputs, targets: schemas.Targets) -> typing.Self:
         """Fit the model on the given inputs and targets.
 
         Args:
@@ -65,7 +65,7 @@ class Model(abc.ABC, pdt.BaseModel, strict=True, frozen=False, extra="forbid"):
             targets (schemas.Targets): model training targets.
 
         Returns:
-            T.Self: instance of the model.
+            typing.Self: instance of the model.
         """
 
     @abc.abstractmethod
@@ -95,14 +95,14 @@ class Model(abc.ABC, pdt.BaseModel, strict=True, frozen=False, extra="forbid"):
         """
         raise NotImplementedError()
 
-    def get_internal_model(self) -> T.Any:
+    def get_internal_model(self) -> typing.Any:
         """Return the internal model in the object.
 
         Raises:
             NotImplementedError: method not implemented.
 
         Returns:
-            T.Any: any internal model (either empty or fitted).
+            typing.Any: any internal model (either empty or fitted).
         """
         raise NotImplementedError()
 
@@ -116,7 +116,7 @@ class BaselineSklearnModel(Model):
         random_state (int, optional): random state of the machine learning pipeline.
     """
 
-    KIND: T.Literal["BaselineSklearnModel"] = "BaselineSklearnModel"
+    KIND: typing.Literal["BaselineSklearnModel"] = "BaselineSklearnModel"
 
     # params
     max_depth: int = 20
@@ -143,8 +143,10 @@ class BaselineSklearnModel(Model):
         "weathersit",
     ]
 
-    @T.override
-    def fit(self, inputs: schemas.Inputs, targets: schemas.Targets) -> "BaselineSklearnModel":
+    @typing.override
+    def fit(
+        self, inputs: schemas.Inputs, targets: schemas.Targets
+    ) -> "BaselineSklearnModel":
         # subcomponents
         categoricals_transformer = preprocessing.OneHotEncoder(
             sparse_output=False, handle_unknown="ignore"
@@ -172,7 +174,7 @@ class BaselineSklearnModel(Model):
         self._pipeline.fit(X=inputs, y=targets[schemas.TargetsSchema.cnt])
         return self
 
-    @T.override
+    @typing.override
     def predict(self, inputs: schemas.Inputs) -> schemas.Outputs:
         model = self.get_internal_model()
         prediction = model.predict(inputs)
@@ -182,7 +184,7 @@ class BaselineSklearnModel(Model):
         outputs = schemas.OutputsSchema.check(data=outputs_)
         return outputs
 
-    @T.override
+    @typing.override
     def explain_model(self) -> schemas.FeatureImportances:
         model = self.get_internal_model()
         regressor = model.named_steps["regressor"]
@@ -194,10 +196,12 @@ class BaselineSklearnModel(Model):
                 "importance": regressor.feature_importances_,
             }
         )
-        feature_importances = schemas.FeatureImportancesSchema.check(data=feature_importances_)
+        feature_importances = schemas.FeatureImportancesSchema.check(
+            data=feature_importances_
+        )
         return feature_importances
 
-    @T.override
+    @typing.override
     def explain_samples(self, inputs: schemas.Inputs) -> schemas.SHAPValues:
         model = self.get_internal_model()
         regressor = model.named_steps["regressor"]
@@ -211,7 +215,7 @@ class BaselineSklearnModel(Model):
         shap_values = schemas.SHAPValuesSchema.check(data=shap_values_)
         return shap_values
 
-    @T.override
+    @typing.override
     def get_internal_model(self) -> pipeline.Pipeline:
         model = self._pipeline
         if model is None:

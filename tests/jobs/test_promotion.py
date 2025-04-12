@@ -59,7 +59,9 @@ def test_promotion_job(
     # - version
     assert out["version"] == model_version.version, "Version number should be the same!"
     # - model version
-    assert out["model_version"].name == out["name"], "Model version name should be the same!"
+    assert out["model_version"].name == out["name"], (
+        "Model version name should be the same!"
+    )
     assert out["model_version"].version == out["version"], (
         "Model version number should be the same!"
     )
@@ -70,4 +72,6 @@ def test_promotion_job(
         "Model version aliases should contain the given alias!"
     )
     # - alerting service
-    assert "Promotion Job Finished" in capsys.readouterr().out, "Alerting service should be called!"
+    assert "Promotion Job Finished" in capsys.readouterr().out, (
+        "Alerting service should be called!"
+    )

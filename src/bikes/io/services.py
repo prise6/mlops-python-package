@@ -7,7 +7,7 @@ from __future__ import annotations
 import abc
 import contextlib as ctx
 import sys
-import typing as T
+import typing
 
 import loguru
 import mlflow
@@ -64,7 +64,7 @@ class LoggerService(Service):
     diagnose: bool = False
     catch: bool = True
 
-    @T.override
+    @typing.override
     def start(self) -> None:
         loguru.logger.remove()
         config = self.model_dump()
@@ -101,7 +101,7 @@ class AlertsService(Service):
     app_name: str = "Bikes"
     timeout: int | None = None
 
-    @T.override
+    @typing.override
     def start(self) -> None:
         pass
 
@@ -160,13 +160,13 @@ class MlflowService(Service):
         Parameters:
             name (str): name of the run.
             description (str | None): description of the run.
-            tags (dict[str, T.Any] | None): tags for the run.
+            tags (dict[str, typing.Any] | None): tags for the run.
             log_system_metrics (bool | None): enable system metrics logging.
         """
 
         name: str
         description: str | None = None
-        tags: dict[str, T.Any] | None = None
+        tags: dict[str, typing.Any] | None = None
         log_system_metrics: bool | None = True
 
     # server uri
@@ -186,7 +186,7 @@ class MlflowService(Service):
     autolog_log_datasets: bool = False
     autolog_silent: bool = False
 
-    @T.override
+    @typing.override
     def start(self) -> None:
         # server uri
         mlflow.set_tracking_uri(uri=self.tracking_uri)
@@ -205,14 +205,16 @@ class MlflowService(Service):
         )
 
     @ctx.contextmanager
-    def run_context(self, run_config: RunConfig) -> T.Generator[mlflow.ActiveRun, None, None]:
+    def run_context(
+        self, run_config: RunConfig
+    ) -> typing.Generator[mlflow.ActiveRun, None, None]:
         """Yield an active Mlflow run and exit it afterwards.
 
         Args:
             run (str): run parameters.
 
         Yields:
-            T.Generator[mlflow.ActiveRun, None, None]: active run context. Will be closed at the end of context.
+            typing.Generator[mlflow.ActiveRun, None, None]: active run context. Will be closed at the end of context.
         """
         with mlflow.start_run(
             run_name=run_config.name,
@@ -228,4 +230,6 @@ class MlflowService(Service):
         Returns:
             MlflowClient: the mlflow client.
         """
-        return mt.MlflowClient(tracking_uri=self.tracking_uri, registry_uri=self.registry_uri)
+        return mt.MlflowClient(
+            tracking_uri=self.tracking_uri, registry_uri=self.registry_uri
+        )

@@ -3,7 +3,7 @@
 # %% IMPORTS
 
 import abc
-import typing as T
+import typing
 
 import pandas as pd
 import pydantic as pdt
@@ -19,9 +19,9 @@ Grid = dict[models.ParamKey, list[models.ParamValue]]
 
 # Results of a model search
 Results = tuple[
-    T.Annotated[pd.DataFrame, "details"],
-    T.Annotated[float, "best score"],
-    T.Annotated[models.Params, "best params"],
+    typing.Annotated[pd.DataFrame, "details"],
+    typing.Annotated[float, "best score"],
+    typing.Annotated[models.Params, "best params"],
 ]
 
 # Cross-validation options for searchers
@@ -80,7 +80,7 @@ class GridCVSearcher(Searcher):
         return_train_score (bool): include train scores if True.
     """
 
-    KIND: T.Literal["GridCVSearcher"] = "GridCVSearcher"
+    KIND: typing.Literal["GridCVSearcher"] = "GridCVSearcher"
 
     n_jobs: int | None = None
     refit: bool = True
@@ -88,7 +88,7 @@ class GridCVSearcher(Searcher):
     error_score: str | float = "raise"
     return_train_score: bool = False
 
-    @T.override
+    @typing.override
     def search(
         self,
         model: models.Model,

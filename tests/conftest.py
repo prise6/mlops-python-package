@@ -3,7 +3,7 @@
 # %% IMPORTS
 
 import os
-import typing as T
+import typing
 
 import omegaconf
 import pytest
@@ -230,14 +230,16 @@ def train_test_sets(
     targets: schemas.Targets,
 ) -> tuple[schemas.Inputs, schemas.Targets, schemas.Inputs, schemas.Targets]:
     """Return the inputs and targets train and test sets from the splitter."""
-    train_index, test_index = next(train_test_splitter.split(inputs=inputs, targets=targets))
+    train_index, test_index = next(
+        train_test_splitter.split(inputs=inputs, targets=targets)
+    )
     inputs_train, inputs_test = inputs.iloc[train_index], inputs.iloc[test_index]
     targets_train, targets_test = targets.iloc[train_index], targets.iloc[test_index]
     return (
-        T.cast(schemas.Inputs, inputs_train),
-        T.cast(schemas.Targets, targets_train),
-        T.cast(schemas.Inputs, inputs_test),
-        T.cast(schemas.Targets, targets_test),
+        typing.cast(schemas.Inputs, inputs_train),
+        typing.cast(schemas.Targets, targets_train),
+        typing.cast(schemas.Inputs, inputs_test),
+        typing.cast(schemas.Targets, targets_test),
     )
 
 
@@ -246,7 +248,9 @@ def train_test_sets(
 
 @pytest.fixture(scope="session")
 def model(
-    train_test_sets: tuple[schemas.Inputs, schemas.Targets, schemas.Inputs, schemas.Targets],
+    train_test_sets: tuple[
+        schemas.Inputs, schemas.Targets, schemas.Inputs, schemas.Targets
+    ],
 ) -> models.BaselineSklearnModel:
     """Return a train model for testing."""
     model = models.BaselineSklearnModel()
@@ -277,7 +281,7 @@ def signer() -> signers.InferSigner:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def logger_service() -> T.Generator[services.LoggerService, None, None]:
+def logger_service() -> typing.Generator[services.LoggerService, None, None]:
     """Return and start the logger service."""
     service = services.LoggerService(colorize=False, diagnose=True)
     service.start()
@@ -288,7 +292,7 @@ def logger_service() -> T.Generator[services.LoggerService, None, None]:
 @pytest.fixture
 def logger_caplog(
     caplog: pl.LogCaptureFixture, logger_service: services.LoggerService
-) -> T.Generator[pl.LogCaptureFixture, None, None]:
+) -> typing.Generator[pl.LogCaptureFixture, None, None]:
     """Extend pytest caplog fixture with the logger service (loguru)."""
     # https://loguru.readthedocs.io/en/stable/resources/migration.html#replacing-caplog-fixture-from-pytest-library
     logger = logger_service.logger()
@@ -304,7 +308,7 @@ def logger_caplog(
 
 
 @pytest.fixture(scope="session", autouse=True)
-def alerts_service() -> T.Generator[services.AlertsService, None, None]:
+def alerts_service() -> typing.Generator[services.AlertsService, None, None]:
     """Return and start the alerter service."""
     service = services.AlertsService(enable=False)
     service.start()
@@ -313,7 +317,9 @@ def alerts_service() -> T.Generator[services.AlertsService, None, None]:
 
 
 @pytest.fixture(scope="function", autouse=True)
-def mlflow_service(tmp_path: str) -> T.Generator[services.MlflowService, None, None]:
+def mlflow_service(
+    tmp_path: str,
+) -> typing.Generator[services.MlflowService, None, None]:
     """Return and start the mlflow service."""
     service = services.MlflowService(
         tracking_uri=f"{tmp_path}/tracking/",
@@ -337,7 +343,9 @@ def tests_path_resolver(tests_path: str) -> str:
         """Get tests path."""
         return tests_path
 
-    omegaconf.OmegaConf.register_new_resolver("tests_path", resolver, use_cache=True, replace=False)
+    omegaconf.OmegaConf.register_new_resolver(
+        "tests_path", resolver, use_cache=True, replace=False
+    )
     return tests_path
 
 
@@ -349,7 +357,9 @@ def tmp_path_resolver(tmp_path: str) -> str:
         """Get tmp data path."""
         return tmp_path
 
-    omegaconf.OmegaConf.register_new_resolver("tmp_path", resolver, use_cache=False, replace=True)
+    omegaconf.OmegaConf.register_new_resolver(
+        "tmp_path", resolver, use_cache=False, replace=True
+    )
     return tmp_path
 
 
@@ -399,7 +409,9 @@ def model_version(
     run_config = mlflow_service.RunConfig(name="Custom-Run")
     with mlflow_service.run_context(run_config=run_config):
         info = saver.save(model=model, signature=signature, input_example=inputs)
-        version = register.register(name=mlflow_service.registry_name, model_uri=info.model_uri)
+        version = register.register(
+            name=mlflow_service.registry_name, model_uri=info.model_uri
+        )
     return version
 
 
@@ -414,5 +426,7 @@ def model_alias(
     client.set_registered_model_alias(
         name=mlflow_service.registry_name, alias=alias, version=model_version.version
     )
-    model_alias = client.get_model_version_by_alias(name=mlflow_service.registry_name, alias=alias)
+    model_alias = client.get_model_version_by_alias(
+        name=mlflow_service.registry_name, alias=alias
+    )
     return model_alias

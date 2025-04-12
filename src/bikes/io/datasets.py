@@ -3,7 +3,7 @@
 # %% IMPORTS
 
 import abc
-import typing as T
+import typing
 
 import mlflow.data.pandas_dataset as lineage
 import pandas as pd
@@ -11,7 +11,7 @@ import pydantic as pdt
 
 # %% TYPINGS
 
-Lineage: T.TypeAlias = lineage.PandasDataset
+Lineage: typing.TypeAlias = lineage.PandasDataset
 
 # %% READERS
 
@@ -66,12 +66,12 @@ class ParquetReader(Reader):
         path (str): local path to the dataset.
     """
 
-    KIND: T.Literal["ParquetReader"] = "ParquetReader"
+    KIND: typing.Literal["ParquetReader"] = "ParquetReader"
 
     path: str
-    backend: T.Literal["pyarrow", "numpy_nullable"] = "pyarrow"
+    backend: typing.Literal["pyarrow", "numpy_nullable"] = "pyarrow"
 
-    @T.override
+    @typing.override
     def read(self) -> pd.DataFrame:
         # can't limit rows at read time
         data = pd.read_parquet(self.path, dtype_backend=self.backend)
@@ -79,7 +79,7 @@ class ParquetReader(Reader):
             data = data.head(self.limit)
         return data
 
-    @T.override
+    @typing.override
     def lineage(
         self,
         name: str,
@@ -126,11 +126,11 @@ class ParquetWriter(Writer):
         path (str): local or S3 path to the dataset.
     """
 
-    KIND: T.Literal["ParquetWriter"] = "ParquetWriter"
+    KIND: typing.Literal["ParquetWriter"] = "ParquetWriter"
 
     path: str
 
-    @T.override
+    @typing.override
     def write(self, data: pd.DataFrame) -> None:
         pd.DataFrame.to_parquet(data, self.path)
 

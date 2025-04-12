@@ -2,13 +2,13 @@
 
 # %% IMPORTS
 
-import typing as T
+import typing
 
 import omegaconf as oc
 
 # %% TYPES
 
-Config = oc.ListConfig | oc.DictConfig
+type Config = oc.ListConfig | oc.DictConfig
 
 # %% PARSERS
 
@@ -40,11 +40,11 @@ def parse_string(string: str) -> Config:
 # %% MERGERS
 
 
-def merge_configs(configs: T.Sequence[Config]) -> Config:
+def merge_configs(configs: typing.Sequence[Config]) -> Config:
     """Merge a list of config into a single config.
 
     Args:
-        configs (T.Sequence[Config]): list of configs.
+        configs (typing.Sequence[Config]): list of configs.
 
     Returns:
         Config: representation of the merged config objects.

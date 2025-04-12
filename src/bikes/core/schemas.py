@@ -2,7 +2,7 @@
 
 # %% IMPORTS
 
-import typing as T
+import typing
 
 import pandas as pd
 import pandera as pa
@@ -12,7 +12,7 @@ import pandera.typing.common as padt
 # %% TYPES
 
 # Generic type for a dataframe container
-TSchema = T.TypeVar("TSchema", bound="pa.DataFrameModel")
+TSchema = typing.TypeVar("TSchema", bound="pa.DataFrameModel")
 
 # %% SCHEMAS
 
@@ -36,7 +36,7 @@ class Schema(pa.DataFrameModel):
         strict: bool = True
 
     @classmethod
-    def check(cls: T.Type[TSchema], data: pd.DataFrame) -> papd.DataFrame[TSchema]:
+    def check(cls: typing.Type[TSchema], data: pd.DataFrame) -> papd.DataFrame[TSchema]:
         """Check the dataframe with this schema.
 
         Args:
@@ -45,7 +45,7 @@ class Schema(pa.DataFrameModel):
         Returns:
             papd.DataFrame[TSchema]: validated dataframe.
         """
-        return T.cast(papd.DataFrame[TSchema], cls.validate(data))
+        return typing.cast(papd.DataFrame[TSchema], cls.validate(data))
 
 
 class InputsSchema(Schema):

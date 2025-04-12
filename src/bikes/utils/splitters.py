@@ -3,7 +3,7 @@
 # %% IMPORTS
 
 import abc
-import typing as T
+import typing
 
 import numpy as np
 import numpy.typing as npt
@@ -16,7 +16,7 @@ from bikes.core import schemas
 
 Index = npt.NDArray[np.int64]
 TrainTestIndex = tuple[Index, Index]
-TrainTestSplits = T.Iterator[TrainTestIndex]
+TrainTestSplits = typing.Iterator[TrainTestIndex]
 
 # %% SPLITTERS
 
@@ -78,13 +78,13 @@ class TrainTestSplitter(Splitter):
         random_state (int): random state for the splitter object.
     """
 
-    KIND: T.Literal["TrainTestSplitter"] = "TrainTestSplitter"
+    KIND: typing.Literal["TrainTestSplitter"] = "TrainTestSplitter"
 
     shuffle: bool = False  # required (time sensitive)
     test_size: int | float = 24 * 30 * 2  # 2 months
     random_state: int = 42
 
-    @T.override
+    @typing.override
     def split(
         self,
         inputs: schemas.Inputs,
@@ -100,7 +100,7 @@ class TrainTestSplitter(Splitter):
         )
         yield train_index, test_index
 
-    @T.override
+    @typing.override
     def get_n_splits(
         self,
         inputs: schemas.Inputs,
@@ -119,13 +119,13 @@ class TimeSeriesSplitter(Splitter):
         test_size (int | float): number or ratio for the test dataset.
     """
 
-    KIND: T.Literal["TimeSeriesSplitter"] = "TimeSeriesSplitter"
+    KIND: typing.Literal["TimeSeriesSplitter"] = "TimeSeriesSplitter"
 
     gap: int = 0
     n_splits: int = 4
     test_size: int | float = 24 * 30 * 2  # 2 months
 
-    @T.override
+    @typing.override
     def split(
         self,
         inputs: schemas.Inputs,
@@ -137,7 +137,7 @@ class TimeSeriesSplitter(Splitter):
         )
         yield from splitter.split(inputs)
 
-    @T.override
+    @typing.override
     def get_n_splits(
         self,
         inputs: schemas.Inputs,

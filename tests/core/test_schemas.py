@@ -35,7 +35,9 @@ def test_outputs_schema(outputs_reader: datasets.Reader) -> None:
 
 def test_shap_values_schema(
     model: models.Model,
-    train_test_sets: tuple[schemas.Inputs, schemas.Targets, schemas.Inputs, schemas.Targets],
+    train_test_sets: tuple[
+        schemas.Inputs, schemas.Targets, schemas.Inputs, schemas.Targets
+    ],
 ) -> None:
     # given
     schema = schemas.SHAPValuesSchema

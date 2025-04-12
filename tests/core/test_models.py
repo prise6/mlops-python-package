@@ -1,6 +1,6 @@
 # %% IMPORTS
 
-import typing as T
+import typing
 
 import pytest
 
@@ -12,7 +12,7 @@ from bikes.core import models, schemas
 def test_model(inputs_samples: schemas.Inputs) -> None:
     # given
     class MyModel(models.Model):
-        KIND: T.Literal["MyModel"] = "MyModel"
+        KIND: typing.Literal["MyModel"] = "MyModel"
 
         # public
         a: int = 1
@@ -20,7 +20,7 @@ def test_model(inputs_samples: schemas.Inputs) -> None:
         # private
         _c: int = 3
 
-        def fit(self, inputs: schemas.Inputs, targets: schemas.Targets) -> T.Self:
+        def fit(self, inputs: schemas.Inputs, targets: schemas.Targets) -> typing.Self:
             return self
 
         def predict(self, inputs: schemas.Inputs) -> schemas.Outputs:
@@ -57,7 +57,9 @@ def test_model(inputs_samples: schemas.Inputs) -> None:
 
 
 def test_baseline_sklearn_model(
-    train_test_sets: tuple[schemas.Inputs, schemas.Targets, schemas.Inputs, schemas.Targets],
+    train_test_sets: tuple[
+        schemas.Inputs, schemas.Targets, schemas.Inputs, schemas.Targets
+    ],
 ) -> None:
     # given
     params = {"max_depth": 3, "n_estimators": 5, "random_state": 0}

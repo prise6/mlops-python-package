@@ -2,7 +2,7 @@
 
 # %% IMPORTS
 
-import typing as T
+import typing
 
 import mlflow
 import pydantic as pdt
@@ -28,17 +28,23 @@ class TuningJob(base.Job):
         searcher: (searchers.SearcherKind): hparams searcher.
     """
 
-    KIND: T.Literal["TuningJob"] = "TuningJob"
+    KIND: typing.Literal["TuningJob"] = "TuningJob"
 
     # Run
-    run_config: services.MlflowService.RunConfig = services.MlflowService.RunConfig(name="Tuning")
+    run_config: services.MlflowService.RunConfig = services.MlflowService.RunConfig(
+        name="Tuning"
+    )
     # Data
     inputs: datasets.ReaderKind = pdt.Field(..., discriminator="KIND")
     targets: datasets.ReaderKind = pdt.Field(..., discriminator="KIND")
     # Model
-    model: models.ModelKind = pdt.Field(models.BaselineSklearnModel(), discriminator="KIND")
+    model: models.ModelKind = pdt.Field(
+        models.BaselineSklearnModel(), discriminator="KIND"
+    )
     # Metric
-    metric: metrics.MetricKind = pdt.Field(metrics.SklearnMetric(), discriminator="KIND")
+    metric: metrics.MetricKind = pdt.Field(
+        metrics.SklearnMetric(), discriminator="KIND"
+    )
     # splitter
     splitter: splitters.SplitterKind = pdt.Field(
         splitters.TimeSeriesSplitter(), discriminator="KIND"
@@ -53,7 +59,7 @@ class TuningJob(base.Job):
         discriminator="KIND",
     )
 
-    @T.override
+    @typing.override
     def run(self) -> base.Locals:
         """Run the tuning job in context."""
         # services
