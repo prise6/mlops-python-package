@@ -125,7 +125,7 @@ class BaselineSklearnModel(Model):
     # private
     _pipeline: pipeline.Pipeline | None = None
     _numericals: list[str] = [
-        "yr",
+        # "yr",  # why using year for next year prediction ?
         "mnth",
         "hr",
         "holiday",
@@ -135,8 +135,8 @@ class BaselineSklearnModel(Model):
         "atemp",
         "hum",
         "windspeed",
-        "casual",
-        "registered",  # too correlated with target
+        # "casual",  # leakage data: not available at prediction time
+        # "registered",  # leakage data: not available at prediction time
     ]
     _categoricals: list[str] = [
         "season",

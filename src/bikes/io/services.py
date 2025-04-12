@@ -201,6 +201,7 @@ class MlflowService(Service):
             log_input_examples=self.autolog_log_input_examples,
             log_model_signatures=self.autolog_log_model_signatures,
             log_datasets=self.autolog_log_datasets,
+            log_models=self.autolog_log_models,
             silent=self.autolog_silent,
         )
 
@@ -233,3 +234,7 @@ class MlflowService(Service):
         return mt.MlflowClient(
             tracking_uri=self.tracking_uri, registry_uri=self.registry_uri
         )
+
+    def get_experiment_id(self) -> str | None:
+        experiment = self.client().get_experiment_by_name(self.experiment_name)
+        return experiment.experiment_id if experiment else None

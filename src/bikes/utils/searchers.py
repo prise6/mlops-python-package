@@ -15,17 +15,17 @@ from bikes.utils import splitters
 # %% TYPES
 
 # Grid of model params
-Grid = dict[models.ParamKey, list[models.ParamValue]]
+type Grid = dict[models.ParamKey, list[models.ParamValue]]
 
 # Results of a model search
-Results = tuple[
+type Results = tuple[
     typing.Annotated[pd.DataFrame, "details"],
     typing.Annotated[float, "best score"],
     typing.Annotated[models.Params, "best params"],
 ]
 
 # Cross-validation options for searchers
-CrossValidation = int | splitters.TrainTestSplits | splitters.Splitter
+type CrossValidation = int | splitters.TrainTestSplits | splitters.Splitter
 
 # %% SEARCHERS
 
@@ -83,7 +83,7 @@ class GridCVSearcher(Searcher):
     KIND: typing.Literal["GridCVSearcher"] = "GridCVSearcher"
 
     n_jobs: int | None = None
-    refit: bool = True
+    refit: bool = False
     verbose: int = 3
     error_score: str | float = "raise"
     return_train_score: bool = False

@@ -26,9 +26,9 @@ project-environment: project-requirements
 [group('project')]
 project-requirements:
     uv export --format=requirements-txt --no-dev --no-hashes \
-        --no-editable --no-emit-project --output-file=requirements.txt
+        --no-editable --no-emit-project --no-annotate --output-file=requirements.txt
 
 # run project job using mlflow
 [group('project')]
 project-run job:
-    uv run mlflow run --experiment-name={{REPOSITORY}} --run-name={{capitalize(job)}} -P conf_file=confs/{{job}}.yaml .
+    uv run mlflow run --experiment-name={{REPOSITORY}} --run-name={{capitalize(job)}} -P conf_file=confs/{{job}}.yaml . --env-manager uv

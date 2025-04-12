@@ -34,7 +34,7 @@ def parse_string(string: str) -> Config:
     Returns:
         Config: representation of the config string.
     """
-    return oc.OmegaConf.create(string)
+    return oc.OmegaConf.from_dotlist([string])
 
 
 # %% MERGERS

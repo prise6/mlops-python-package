@@ -114,6 +114,10 @@ class CustomSaver(Saver):
         https://mlflow.org/docs/latest/python_api/mlflow.pyfunc.html?#mlflow.pyfunc.PythonModel
         """
 
+        _skip_type_hint_validation: bool = (
+            True  # skip type validation because we use pandera
+        )
+
         def __init__(self, model: models.Model):
             """Initialize the custom saver adapter.
 

@@ -5,6 +5,7 @@
 import typing
 
 import mlflow
+import mlflow.experiments
 import pydantic as pdt
 
 from bikes.core import metrics as metrics_
@@ -61,6 +62,8 @@ class TrainingJob(base.Job):
     registry: registries.RegisterKind = pdt.Field(
         registries.MlflowRegister(), discriminator="KIND"
     )
+    # tuning run id
+    params_from_last_tuning_run: bool = pdt.Field(default=True)
 
     @typing.override
     def run(self) -> base.Locals:
@@ -71,6 +74,28 @@ class TrainingJob(base.Job):
         # - mlflow
         client = self.mlflow_service.client()
         logger.info("With client: {}", client.tracking_uri)
+
+        # get params from last tuning run id
+        if self.params_from_last_tuning_run:
+            if xp_id := self.mlflow_service.get_experiment_id():
+                last_tuning_run = self.mlflow_service.client().search_runs(
+                    experiment_ids=[xp_id],
+                    filter_string="attributes.run_name = 'Tuning'",
+                    order_by=["attributes.created DESC"],
+                    max_results=1,
+                )
+                if last_tuning_run:
+                    tuning_params = {
+                        k.replace("best_", ""): int(
+                            v
+                        )  # TODO: cas où ca doit être un float ou str
+                        for k, v in last_tuning_run[0].data.params.items()
+                        if k.startswith("best_")
+                    }
+                    print(tuning_params)
+                    self.model.set_params(**tuning_params)
+            pass
+
         with self.mlflow_service.run_context(run_config=self.run_config) as run:
             logger.info("With run context: {}", run.info)
             # data

@@ -6,3 +6,8 @@ job:
   targets:
     KIND: ParquetReader
     path: data/targets_train.parquet
+  searcher:
+    KIND: GridCVSearcher
+    param_grid:
+      n_estimators: [200, 300, 500]
+      max_depth: [5, 7, 12]
